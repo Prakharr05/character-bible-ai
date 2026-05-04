@@ -1,0 +1,9 @@
+streamlit==1.40.0
+openai==1.54.0
+yt-dlp==2024.10.22
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+chromadb==0.5.18
+python-dotenv==1.0.1
+pandas==2.2.3
+pydantic==2.9.2

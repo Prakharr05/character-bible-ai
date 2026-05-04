@@ -1,0 +1,167 @@
+{
+  "name": "Character Bible AI - Daily Ingestion Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "hours", "hoursInterval": 24}]
+        }
+      },
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://graph.instagram.com/v21.0/{{ $env.IG_USER_ID }}/media",
+        "options": {
+          "qs": {
+            "fields": "id,caption,media_type,media_url,permalink,timestamp",
+            "access_token": "={{ $env.IG_ACCESS_TOKEN }}"
+          }
+        }
+      },
+      "name": "Fetch Instagram Posts",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 200],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "options": {
+          "qs": {
+            "part": "snippet",
+            "channelId": "={{ $env.YT_CHANNEL_ID }}",
+            "order": "date",
+            "maxResults": "10",
+            "key": "={{ $env.YT_API_KEY }}"
+          }
+        }
+      },
+      "name": "Fetch YouTube Uploads",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 400],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT url FROM videos WHERE url = $1",
+        "options": {}
+      },
+      "name": "Filter Already-Ingested",
+      "type": "n8n-nodes-base.postgres",
+      "position": [680, 300],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "command": "yt-dlp -f 'best[height<=720]/best' -o '/data/videos/{{ $json.id }}.%(ext)s' '{{ $json.url }}'"
+      },
+      "name": "Download Video (yt-dlp)",
+      "type": "n8n-nodes-base.executeCommand",
+      "position": [900, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryData": true,
+        "binaryPropertyName": "data",
+        "additionalFields": {
+          "language": "auto",
+          "response_format": "verbose_json"
+        }
+      },
+      "name": "Whisper Transcribe",
+      "type": "n8n-nodes-base.openAi",
+      "position": [1120, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You identify which character is speaking based on visual cues, voice, and language patterns. Return JSON: {character: 'billi_maasi'|'coco_bhaiya'|..., confidence: 0-1}"
+            },
+            {
+              "role": "user",
+              "content": "Transcript: {{ $json.text }}\\nKey frames attached separately."
+            }
+          ]
+        }
+      },
+      "name": "Character Attribution (LLM)",
+      "type": "n8n-nodes-base.openAi",
+      "position": [1340, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {"value1": "={{ $json.confidence }}", "operation": "smaller", "value2": 0.7}
+          ]
+        }
+      },
+      "name": "Low Confidence?",
+      "type": "n8n-nodes-base.if",
+      "position": [1560, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "channel": "kusha-team-review",
+        "text": "🔍 Manual review needed for video {{ $json.video_id }} — confidence {{ $json.confidence }}"
+      },
+      "name": "Slack: Manual Review",
+      "type": "n8n-nodes-base.slack",
+      "position": [1780, 200],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "videos",
+        "columns": "url, title, character, transcript, created_at"
+      },
+      "name": "Save to Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "position": [1780, 400],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "command": "python /scripts/extract_bible.py --character {{ $json.character }}"
+      },
+      "name": "Trigger Bible Update",
+      "type": "n8n-nodes-base.executeCommand",
+      "position": [2000, 400],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Daily Trigger": {
+      "main": [[{"node": "Fetch Instagram Posts", "type": "main", "index": 0}, {"node": "Fetch YouTube Uploads", "type": "main", "index": 0}]]
+    },
+    "Fetch Instagram Posts": {"main": [[{"node": "Filter Already-Ingested", "type": "main", "index": 0}]]},
+    "Fetch YouTube Uploads": {"main": [[{"node": "Filter Already-Ingested", "type": "main", "index": 0}]]},
+    "Filter Already-Ingested": {"main": [[{"node": "Download Video (yt-dlp)", "type": "main", "index": 0}]]},
+    "Download Video (yt-dlp)": {"main": [[{"node": "Whisper Transcribe", "type": "main", "index": 0}]]},
+    "Whisper Transcribe": {"main": [[{"node": "Character Attribution (LLM)", "type": "main", "index": 0}]]},
+    "Character Attribution (LLM)": {"main": [[{"node": "Low Confidence?", "type": "main", "index": 0}]]},
+    "Low Confidence?": {
+      "main": [
+        [{"node": "Slack: Manual Review", "type": "main", "index": 0}],
+        [{"node": "Save to Postgres", "type": "main", "index": 0}]
+      ]
+    },
+    "Save to Postgres": {"main": [[{"node": "Trigger Bible Update", "type": "main", "index": 0}]]}
+  }
+}
