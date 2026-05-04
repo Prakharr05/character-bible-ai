@@ -1,4 +1,4 @@
-"""
+﻿"""
 Download videos from a CSV of URLs using yt-dlp.
 Usage: python src/download.py
 """
@@ -11,19 +11,18 @@ OUTPUT_DIR = Path("data/videos")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def download_video(url: str, video_id: str) -> Path | None:
+def download_video(url: str, video_id: str):
     output_path = OUTPUT_DIR / f"{video_id}.%(ext)s"
     cmd = [
         "yt-dlp",
-        "-f", "best[height<=720]/best",   # cap at 720p for speed
+        "-f", "best[height<=720]/best",
         "-o", str(output_path),
         "--no-playlist",
-        "--cookies-from-browser", "edge",
+        "--cookies", "cookies.txt",
         url,
     ]
     try:
         subprocess.run(cmd, check=True, capture_output=True, text=True)
-        # find the actual downloaded file
         for f in OUTPUT_DIR.glob(f"{video_id}.*"):
             return f
     except subprocess.CalledProcessError as e:
