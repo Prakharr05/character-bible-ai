@@ -1,17 +1,17 @@
-﻿"""
+"""
 Character Bible AI - Writing Co-Pilot
 Streamlit interface with three core features.
 """
 import os
 import json
+from pathlib import Path
 import streamlit as st
 from openai import OpenAI
 import chromadb
 from dotenv import load_dotenv
 
-from db import SessionLocal, CharacterBible
-
 load_dotenv()
+
 api_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 
@@ -24,24 +24,22 @@ chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
 # --------------------------------------------------------------------------
 @st.cache_data(ttl=60)
 def load_bible(character: str) -> dict:
-    session = SessionLocal()
-    row = session.query(CharacterBible).filter_by(character=character).first()
-    session.close()
-    if not row:
+    bible_path = Path("data/bibles") / f"{character}.json"
+    if not bible_path.exists():
         return {}
+    bible = json.loads(bible_path.read_text(encoding="utf-8"))
     return {
-        "catchphrases": json.loads(row.catchphrases or "[]"),
-        "vocabulary": json.loads(row.vocabulary or "{}"),
-        "opinions": json.loads(row.opinions or "[]"),
-        "relationships": json.loads(row.relationships or "[]"),
-        "backstory": json.loads(row.backstory or "[]"),
-        "brands": json.loads(row.brands_referenced or "[]"),
-        "aesthetic": json.loads(row.aesthetic or "{}"),
+        "catchphrases": bible.get("catchphrases", []),
+        "vocabulary": bible.get("vocabulary_fingerprint", {}),
+        "opinions": bible.get("opinions", []),
+        "relationships": bible.get("relationships", []),
+        "backstory": bible.get("backstory_facts", []),
+        "brands": bible.get("brands_referenced", []),
+        "aesthetic": bible.get("aesthetic_markers", {}),
     }
 
 
 def get_relevant_dialogue(character: str, query: str, n: int = 6) -> list[dict]:
-    """Semantic search across the character's past dialogue."""
     try:
         collection = chroma_client.get_collection(name=f"dialogue_{character}")
         results = collection.query(query_texts=[query], n_results=n)
@@ -198,8 +196,8 @@ def answer_question(character: str, question: str) -> str:
 # --------------------------------------------------------------------------
 # Streamlit UI
 # --------------------------------------------------------------------------
-st.set_page_config(page_title="Character Bible AI", page_icon="ðŸ“š", layout="wide")
-st.title("ðŸ“š Character Bible AI")
+st.set_page_config(page_title="Character Bible AI", page_icon=":books:", layout="wide")
+st.title(":books: Character Bible AI")
 st.caption("A writing co-pilot for Kusha Kapila's character universe")
 
 with st.sidebar:
@@ -218,11 +216,10 @@ with st.sidebar:
         with st.expander("View bible"):
             st.json(bible)
     else:
-        st.warning("No bible found. Run `python src/extract_bible.py` first.")
+        st.warning("No bible found.")
 
-tab1, tab2, tab3 = st.tabs(["âœï¸ Authenticity Scorer", "ðŸ” Continuity Checker", "ðŸ’¬ Ask About Character"])
+tab1, tab2, tab3 = st.tabs(["Authenticity Scorer", "Continuity Checker", "Ask About Character"])
 
-# Tab 1: Authenticity Scorer
 with tab1:
     st.subheader("Would this character actually say this?")
     st.markdown("Type a draft line. The AI scores it against the character's established voice.")
@@ -243,7 +240,6 @@ with tab1:
             if result.get("suggested_rewrite"):
                 st.markdown(f"**Suggested rewrite:** _{result['suggested_rewrite']}_")
 
-# Tab 2: Continuity Checker
 with tab2:
     st.subheader("Check a script against established canon")
     st.markdown("Paste a draft script. The AI flags contradictions with past videos.")
@@ -258,28 +254,27 @@ with tab2:
                 st.error(f"Found {len(contradictions)} contradiction(s)")
                 for c in contradictions:
                     sev = c.get("severity", "medium")
-                    sev_emoji = {"high": "ðŸ”´", "medium": "ðŸŸ¡", "low": "ðŸŸ¢"}.get(sev, "âšª")
-                    st.markdown(f"{sev_emoji} **{sev.upper()}**")
+                    sev_label = {"high": "HIGH", "medium": "MEDIUM", "low": "LOW"}.get(sev, "UNKNOWN")
+                    st.markdown(f"**Severity: {sev_label}**")
                     st.markdown(f"- Draft says: _{c.get('draft_says', '')}_")
                     st.markdown(f"- Canon says: _{c.get('canon_says', '')}_")
                     st.markdown(f"- Evidence: {c.get('evidence', '')}")
                     st.markdown("---")
             else:
-                st.success("No contradictions found âœ“")
+                st.success("No contradictions found")
 
             new_items = result.get("new_canon_introduced", [])
             if new_items:
                 st.info("New canon being introduced:")
                 for n in new_items:
-                    st.markdown(f"- **{n.get('element', '')}** â€” {n.get('note', '')}")
+                    st.markdown(f"- **{n.get('element', '')}** - {n.get('note', '')}")
 
             st.markdown(f"**Verdict:** {result.get('verdict', '')}")
 
-# Tab 3: Q&A
 with tab3:
     st.subheader("Ask anything about this character's canon")
     question = st.text_input("Question", key="qa_question",
-                             placeholder="What does Coco Bhaiya think about cricket?")
+                             placeholder="What does Billi Maasi think about middle-class people?")
     if st.button("Ask", type="primary", key="qa_btn"):
         if question.strip():
             with st.spinner("Searching canon..."):
