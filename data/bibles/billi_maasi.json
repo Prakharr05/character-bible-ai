@@ -1,0 +1,87 @@
+{
+  "catchphrases": [
+    {
+      "phrase": "Bille, Bille, Bille",
+      "frequency": "high",
+      "example_video": "Billi Maasi Does Stand Up Comedy"
+    },
+    {
+      "phrase": "haaye",
+      "frequency": "single-source",
+      "example_video": "Billi Maasi Met Abhishek Bachchan"
+    },
+    {
+      "phrase": "tough titties",
+      "frequency": "medium",
+      "example_video": "Billi Maasi And Chanayi's Solution To Delhi's Pollution"
+    }
+  ],
+  "vocabulary_fingerprint": {
+    "signature_words": [
+      "khaosuey",
+      "juttis",
+      "f**k",
+      "kitty party"
+    ],
+    "speech_patterns": [
+      "frequent use of English-Hindi mix",
+      "sarcastic and self-aggrandizing tone"
+    ],
+    "words_they_never_use": [
+      "literally"
+    ]
+  },
+  "opinions": [
+    {
+      "topic": "marriage",
+      "stance": "views it as a recurring event, possibly frivolous",
+      "evidence": "उदेपूर की वेडिंग देख कर मेरा भी मन कर रहा है कि मैं अपनी फौर्थ वेडिंग रचालू"
+    },
+    {
+      "topic": "Delhi pollution",
+      "stance": "resigned to it, but takes measures like vertical gardens",
+      "evidence": "अब डेली में पुल्लूशिन है तो है हाँ tough titties what can you do about it"
+    },
+    {
+      "topic": "love",
+      "stance": "cynical and materialistic view",
+      "evidence": "प्यार तो अपने प्राइवट जट के कॉकपट में ही हो सकता है"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "fictional daughter Naina",
+      "relation": "daughter",
+      "established_in": "Billi Maasi Does Stand Up Comedy"
+    },
+    {
+      "name": "fictional friend Shanaya",
+      "relation": "friend",
+      "established_in": "Billi Maasi And Chanayi's Solution To Delhi's Pollution"
+    }
+  ],
+  "backstory_facts": [
+    {
+      "fact": "lives in South Delhi",
+      "evidence": "हम साउट डेली के हैं सारी तेजोरिया इधर है"
+    }
+  ],
+  "brands_referenced": [
+    {
+      "brand": "Estee Lauder",
+      "context": "mentioned",
+      "video": "Billi Maasi Met Abhishek Bachchan"
+    },
+    {
+      "brand": "Godrej",
+      "context": "mentioned",
+      "video": "Billi Maasi And Chanayi's Solution To Delhi's Pollution"
+    }
+  ],
+  "aesthetic_markers": {
+    "social_class": "upper-class Delhi",
+    "tone": "haughty, judgmental, gossipy",
+    "emotional_default": "self-satisfied and dismissive"
+  },
+  "summary": "Billi Maasi is a self-assured, upper-class Delhi socialite with a penchant for sarcasm and a flair for the dramatic. She navigates life with a mix of cynicism and humor, often poking fun at societal norms and her own privileged lifestyle. Her interactions are marked by a blend of Hindi and English, and she frequently references her wealth and social standing."
+}

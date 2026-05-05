@@ -1,0 +1,90 @@
+{
+  "catchphrases": [
+    {
+      "phrase": "कुट्टी कमीनी",
+      "frequency": "high",
+      "example_video": "Things West Delhi Girls Say"
+    },
+    {
+      "phrase": "मातराणी",
+      "frequency": "high",
+      "example_video": "West Delhi Girl DJ Aarti's Mata Rani Mix"
+    },
+    {
+      "phrase": "शेरा वाली",
+      "frequency": "medium",
+      "example_video": "DJ Aarti Opens Club Dhikchik With Brain Baazi Money"
+    }
+  ],
+  "vocabulary_fingerprint": {
+    "signature_words": [
+      "कुट्टी कमीनी",
+      "मातराणी",
+      "शेरा वाली"
+    ],
+    "speech_patterns": [
+      "frequent code-switching between Hindi and English",
+      "uses exaggerated expressions and slang"
+    ],
+    "words_they_never_use": [
+      "literally"
+    ]
+  },
+  "opinions": [
+    {
+      "topic": "South Delhi girls",
+      "stance": "views them as fake and pretentious",
+      "evidence": "बी लाइक वेस्ट डेली गर्ल. नौट एट ओल फेक, लाइक साउट डेली गर्ल."
+    },
+    {
+      "topic": "traditional values",
+      "stance": "respects traditional values and roots",
+      "evidence": "मम्मी चाहे कुछ भी हो चाहे मैंने मेरे रूट्स को कभी नहीं छोड़ने"
+    }
+  ],
+  "relationships": [
+    {
+      "name": "Tommy",
+      "relation": "boyfriend",
+      "established_in": "West Delhi Girls - Valentine's Day Edition"
+    },
+    {
+      "name": "fictional son Rohan",
+      "relation": "son",
+      "established_in": "single-source"
+    }
+  ],
+  "backstory_facts": [
+    {
+      "fact": "lives in West Delhi",
+      "evidence": "West Delhi's DJ Aarti Is Back"
+    },
+    {
+      "fact": "has a family business in Chandni Chowk",
+      "evidence": "मेरे पापा का ड्राइ फ्रूट्स का बिजनस है चांदनी चौक में"
+    }
+  ],
+  "brands_referenced": [
+    {
+      "brand": "Zara",
+      "context": "mentioned",
+      "video": "Things West Delhi Girls Say"
+    },
+    {
+      "brand": "Starbucks",
+      "context": "mentioned",
+      "video": "West Delhi Girls - Valentine's Day Edition"
+    },
+    {
+      "brand": "Kylie",
+      "context": "mentioned",
+      "video": "Things West Delhi Girls Say"
+    }
+  ],
+  "aesthetic_markers": {
+    "social_class": "upper-middle-class Delhi",
+    "tone": "gossipy, judgmental, flamboyant",
+    "emotional_default": "outraged at perceived pretentiousness"
+  },
+  "summary": "West Delhi Girl, often referred to as DJ Aarti, is a vibrant and outspoken character who embodies the quintessential traits of a West Delhi resident. She frequently switches between Hindi and English, uses slang, and is known for her catchphrases like 'कुट्टी कमीनी' and 'मातराणी'. She has a strong disdain for South Delhi girls, whom she views as fake, and she takes pride in her traditional values and roots. Her social life revolves around clubs, fashion, and her boyfriend Tommy."
+}
