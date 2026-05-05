@@ -1,4 +1,4 @@
-"""
+﻿"""
 Character Bible AI - Writing Co-Pilot
 Streamlit interface with three core features.
 """
@@ -12,7 +12,8 @@ from dotenv import load_dotenv
 from db import SessionLocal, CharacterBible
 
 load_dotenv()
-client = OpenAI()
+api_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 
 CHROMA_PATH = os.getenv("CHROMA_PATH", "./data/chroma_db")
 chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
@@ -197,8 +198,8 @@ def answer_question(character: str, question: str) -> str:
 # --------------------------------------------------------------------------
 # Streamlit UI
 # --------------------------------------------------------------------------
-st.set_page_config(page_title="Character Bible AI", page_icon="📚", layout="wide")
-st.title("📚 Character Bible AI")
+st.set_page_config(page_title="Character Bible AI", page_icon="ðŸ“š", layout="wide")
+st.title("ðŸ“š Character Bible AI")
 st.caption("A writing co-pilot for Kusha Kapila's character universe")
 
 with st.sidebar:
@@ -219,7 +220,7 @@ with st.sidebar:
     else:
         st.warning("No bible found. Run `python src/extract_bible.py` first.")
 
-tab1, tab2, tab3 = st.tabs(["✍️ Authenticity Scorer", "🔍 Continuity Checker", "💬 Ask About Character"])
+tab1, tab2, tab3 = st.tabs(["âœï¸ Authenticity Scorer", "ðŸ” Continuity Checker", "ðŸ’¬ Ask About Character"])
 
 # Tab 1: Authenticity Scorer
 with tab1:
@@ -257,20 +258,20 @@ with tab2:
                 st.error(f"Found {len(contradictions)} contradiction(s)")
                 for c in contradictions:
                     sev = c.get("severity", "medium")
-                    sev_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(sev, "⚪")
+                    sev_emoji = {"high": "ðŸ”´", "medium": "ðŸŸ¡", "low": "ðŸŸ¢"}.get(sev, "âšª")
                     st.markdown(f"{sev_emoji} **{sev.upper()}**")
                     st.markdown(f"- Draft says: _{c.get('draft_says', '')}_")
                     st.markdown(f"- Canon says: _{c.get('canon_says', '')}_")
                     st.markdown(f"- Evidence: {c.get('evidence', '')}")
                     st.markdown("---")
             else:
-                st.success("No contradictions found ✓")
+                st.success("No contradictions found âœ“")
 
             new_items = result.get("new_canon_introduced", [])
             if new_items:
                 st.info("New canon being introduced:")
                 for n in new_items:
-                    st.markdown(f"- **{n.get('element', '')}** — {n.get('note', '')}")
+                    st.markdown(f"- **{n.get('element', '')}** â€” {n.get('note', '')}")
 
             st.markdown(f"**Verdict:** {result.get('verdict', '')}")
 
