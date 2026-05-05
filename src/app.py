@@ -205,7 +205,7 @@ with st.sidebar:
     st.header("Character")
     character = st.selectbox(
         "Select character",
-        ["billi_maasi", "coco_bhaiya"],
+        ["billi_maasi", "west_delhi_girl"],
         format_func=lambda x: x.replace("_", " ").title(),
     )
 

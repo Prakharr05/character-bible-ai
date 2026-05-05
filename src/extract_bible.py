@@ -180,7 +180,7 @@ def embed_dialogue(character: str):
 
 def main():
     init_db()
-    characters = ["billi_maasi", "coco_bhaiya"]   # extend as you tag more
+    characters = ["billi_maasi", "west_delhi_girl"]   # extend as you tag more
     for character in characters:
         bible = extract_bible(character)
         if bible:
