@@ -119,7 +119,7 @@ def extract_bible(character: str) -> dict:
 
     # save to disk
     bible_path = BIBLES_DIR / f"{character}.json"
-    bible_path.write_text(json.dumps(bible, indent=2, ensure_ascii=False))
+    bible_path.write_text(json.dumps(bible, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"  -> Saved to {bible_path}")
 
     return bible
